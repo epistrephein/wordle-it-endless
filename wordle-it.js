@@ -854,6 +854,7 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
           lastPlayedTs: null,
           lastCompletedTs: null,
           restoringFromLocalStorage: null,
+          gameSeed: null,
           hardMode: !1
       };
 
@@ -869,7 +870,7 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
       }(va(a, e))
   }
   var Sa = document.createElement("template");
-  Sa.innerHTML = '\n  <style>\n  .setting {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    border-bottom: 1px solid var(--color-tone-4);\n    padding: 16px 0;\n  }\n\n  a, a:visited {\n    color: var(--color-tone-2);\n  }\n\n  .title {\n    font-size: 18px;\n  }\n  .text {\n    padding-right: 8px;\n  }\n  .description {\n    font-size: 12px;\n    color: var(--color-tone-2);\n  }\n\n  #footnote {\n    position: absolute;\n    bottom: 0;\n    right: 0;\n    padding: 16px;\n    color: var(--color-tone-2);\n    font-size: 12px;\n    text-align: right;\n  }\n\n  @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {\n    .setting {\n      padding: 16px;\n    }\n  }\n\n  </style>\n  <div class="sections">\n    <section>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Il gioco si fa duro</div>\n          <div class="description">Ogni lettera nota deve essere usata nei tentativi successivi</div>\n        </div>\n        <div class="control">\n          <game-switch id="hard-mode" name="hard-mode"></game-switch>\n        </div>\n      </div>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Tema nero</div>\n        </div>\n        <div class="control">\n          <game-switch id="dark-theme" name="dark-theme"></game-switch>\n        </div>\n      </div>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Colori ad alto contrasto</div>\n        </div>\n        <div class="control">\n          <game-switch id="color-blind-theme" name="color-blind-theme"></game-switch>\n        </div>\n      </div>\n    </section>\n\n    <section>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Feedback</div>\n        </div>\n        <div class="control">\n          <a href="https://github.com/pietroppeter/wordle-it/issues/new" target="blank" title="github.com/pietroppeter/wordle-it">Github</a>\n          |\n          <a href="https://twitter.com/intent/tweet?screen_name=pietroppeter" target="blank" title="@pietroppeter">Twitter</a>\n        </div>\n      </div>\n    </section>\n  </div>\n  <div id="footnote">\n    <div id="puzzle-number"></div>\n    <div id="hash"></div>\n  <div>\n';
+  Sa.innerHTML = '\n  <style>\n  .setting {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    border-bottom: 1px solid var(--color-tone-4);\n    padding: 16px 0;\n  }\n\n  a, a:visited {\n    color: var(--color-tone-2);\n  }\n\n  .title {\n    font-size: 18px;\n  }\n  .text {\n    padding-right: 8px;\n  }\n  .description {\n    font-size: 12px;\n    color: var(--color-tone-2);\n  }\n\n  #footnote {\n    position: absolute;\n    bottom: 0;\n    right: 0;\n    padding: 16px;\n    color: var(--color-tone-2);\n    font-size: 12px;\n    text-align: right;\n  }\n\n  @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {\n    .setting {\n      padding: 16px;\n    }\n  }\n\n  </style>\n  <div class="sections">\n    <section>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Il gioco si fa duro</div>\n          <div class="description">Ogni lettera nota deve essere usata nei tentativi successivi</div>\n        </div>\n        <div class="control">\n          <game-switch id="hard-mode" name="hard-mode"></game-switch>\n        </div>\n      </div>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Tema nero</div>\n        </div>\n        <div class="control">\n          <game-switch id="dark-theme" name="dark-theme"></game-switch>\n        </div>\n      </div>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Colori ad alto contrasto</div>\n        </div>\n        <div class="control">\n          <game-switch id="color-blind-theme" name="color-blind-theme"></game-switch>\n        </div>\n      </div>\n    </section>\n\n    <section>\n      <div class="setting">\n        <div class="text">\n          <div class="title">Feedback</div>\n        </div>\n        <div class="control">\n          <a href="https://github.com/epistrephein/wordle-it-endless/issues/new" target="blank" title="github.com/epistrephein/wordle-it-endless">Github</a>\n        </div>\n      </div>\n    </section>\n  </div>\n  <div id="footnote">\n    <div id="puzzle-number"></div>\n    <div id="hash"></div>\n  <div>\n';
   var _a = function(e) {
       n(t, e);
       var a = h(t);
@@ -971,13 +972,26 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
       return Math.floor(t / 864e5)
   }
 
-  function Pa(e) {
-      var a, s = Na(e);
-      return a = s % Aa.length, Aa[a]
+  function Pa(e, a) {
+      if (!Aa.length) return "";
+      for (var s = Yb(void 0 === e ? Zb() : e), t = Aa[Math.floor(s() * Aa.length)]; Aa.length > 1 && a && t === a;) t = Aa[Math.floor(s() * Aa.length)];
+      return t
   }
 
   function Na(e) {
-      return $a(Ra, e)
+      return Aa.indexOf(e) + 1
+  }
+
+  function Zb() {
+      return (Date.now() ^ Math.floor(4294967296 * Math.random())) >>> 0
+  }
+
+  function Yb(e) {
+      var a = 0 | e;
+      return function() {
+          a ^= a << 13, a ^= a >>> 17, a ^= a << 5;
+          return (a >>> 0) / 4294967296
+      }
   }
   var Ha, Ga = "abcdefghijklmnopqrstuvwxyz";
 
@@ -993,11 +1007,11 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
 
   function Fa(e) {
       for (var a = "", s = 0; s < e.length; s++) {
-          var t = Ga.indexOf(e[s]);
-          a += t >= 0 ? Ba[t] : "_"
-      }
-      return a
+      var t = Ga.indexOf(e[s]);
+      a += t >= 0 ? Ba[t] : "_"
   }
+  return a
+}
   var Wa = "statistics",
       Ya = "fail",
       Ja = {
@@ -1014,7 +1028,8 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
           winPercentage: 0,
           gamesPlayed: 0,
           gamesWon: 0,
-          averageGuesses: 0
+          averageGuesses: 0,
+          lastGameWon: !1
       };
 
   function Ua() {
@@ -1024,15 +1039,15 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
 
   function Xa(e) {
       var a = e.isWin,
-          s = e.isStreak,
           t = e.numGuesses,
           o = Ua();
-      a ? (o.guesses[t] += 1, s ? o.currentStreak += 1 : o.currentStreak = 1) : (o.currentStreak = 0, o.guesses.fail += 1), o.maxStreak = Math.max(o.currentStreak, o.maxStreak), o.gamesPlayed += 1, o.gamesWon += a ? 1 : 0, o.winPercentage = Math.round(o.gamesWon / o.gamesPlayed * 100), o.averageGuesses = Math.round(Object.entries(o.guesses).reduce((function(e, a) {
+      var s = "boolean" == typeof o.lastGameWon ? o.lastGameWon : o.currentStreak > 0;
+      a ? (o.guesses[t] += 1, o.currentStreak = s ? o.currentStreak + 1 : 1) : (o.currentStreak = 0, o.guesses.fail += 1), o.maxStreak = Math.max(o.currentStreak, o.maxStreak), o.gamesPlayed += 1, o.gamesWon += a ? 1 : 0, o.winPercentage = Math.round(o.gamesWon / o.gamesPlayed * 100), o.averageGuesses = Math.round(Object.entries(o.guesses).reduce((function(e, a) {
               var s = y(a, 2),
                   t = s[0],
                   o = s[1];
               return t !== Ya ? e += t * o : e
-          }), 0) / o.gamesWon),
+          }), 0) / o.gamesWon), o.lastGameWon = a,
           function(e) {
               window.localStorage.setItem(Wa, JSON.stringify(e))
           }(o)
@@ -1051,19 +1066,20 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
 
           function t() {
               var e;
-              s(this, t), r(p(e = a.call(this)), "tileIndex", 0), r(p(e), "rowIndex", 0), r(p(e), "solution", void 0), r(p(e), "boardState", void 0), r(p(e), "evaluations", void 0), r(p(e), "canInput", !0), r(p(e), "gameStatus", Qa), r(p(e), "letterEvaluations", {}), r(p(e), "$board", void 0), r(p(e), "$keyboard", void 0), r(p(e), "$game", void 0), r(p(e), "today", void 0), r(p(e), "lastPlayedTs", void 0), r(p(e), "lastCompletedTs", void 0), r(p(e), "hardMode", void 0), r(p(e), "dayOffset", void 0), e.attachShadow({
+              s(this, t), r(p(e = a.call(this)), "tileIndex", 0), r(p(e), "rowIndex", 0), r(p(e), "solution", void 0), r(p(e), "gameSeed", void 0), r(p(e), "boardState", void 0), r(p(e), "evaluations", void 0), r(p(e), "canInput", !0), r(p(e), "gameStatus", Qa), r(p(e), "letterEvaluations", {}), r(p(e), "$board", void 0), r(p(e), "$keyboard", void 0), r(p(e), "$game", void 0), r(p(e), "today", void 0), r(p(e), "lastPlayedTs", void 0), r(p(e), "lastCompletedTs", void 0), r(p(e), "hardMode", void 0), r(p(e), "dayOffset", void 0), e.attachShadow({
                   mode: "open"
               }), e.today = new Date;
               var o = za();
-              return e.lastPlayedTs = o.lastPlayedTs, !e.lastPlayedTs || $a(new Date(e.lastPlayedTs), e.today) >= 1 ? (e.boardState = new Array(6).fill(""), e.evaluations = new Array(6).fill(null), e.solution = Pa(e.today), e.dayOffset = Na(e.today), e.lastCompletedTs = o.lastCompletedTs, e.hardMode = o.hardMode, e.restoringFromLocalStorage = !1, ja({
+              return e.lastPlayedTs = o.lastPlayedTs, o.solution ? (e.boardState = Array.isArray(o.boardState) ? o.boardState : new Array(6).fill(""), e.evaluations = Array.isArray(o.evaluations) ? o.evaluations : new Array(6).fill(null), e.rowIndex = o.rowIndex || 0, e.tileIndex = e.boardState[e.rowIndex] ? e.boardState[e.rowIndex].length : 0, e.gameSeed = o.gameSeed || Zb(), e.solution = o.solution, e.dayOffset = Na(o.solution), e.letterEvaluations = Oa(e.boardState, e.evaluations), e.gameStatus = o.gameStatus || Qa, e.lastCompletedTs = o.lastCompletedTs, e.hardMode = o.hardMode, e.canInput = e.gameStatus === Qa, o.gameSeed || ja({gameSeed: e.gameSeed}), e.restoringFromLocalStorage = !0) : (e.boardState = new Array(6).fill(""), e.evaluations = new Array(6).fill(null), e.rowIndex = 0, e.gameSeed = Zb(), e.solution = Pa(e.gameSeed), e.dayOffset = Na(e.solution), e.lastCompletedTs = o.lastCompletedTs, e.hardMode = o.hardMode, e.restoringFromLocalStorage = !1, ja({
                   rowIndex: e.rowIndex,
                   boardState: e.boardState,
                   evaluations: e.evaluations,
+                  gameSeed: e.gameSeed,
                   solution: e.solution,
                   gameStatus: e.gameStatus
               }), Da("event", "level_start", {
                   level_name: Fa(e.solution)
-              })) : (e.boardState = o.boardState, e.evaluations = o.evaluations, e.rowIndex = o.rowIndex, e.solution = o.solution, e.dayOffset = Na(e.today), e.letterEvaluations = Oa(e.boardState, e.evaluations), e.gameStatus = o.gameStatus, e.lastCompletedTs = o.lastCompletedTs, e.hardMode = o.hardMode, e.gameStatus !== Qa && (e.canInput = !1), e.restoringFromLocalStorage = !0), e
+              })), e
           }
           return o(t, [{
               key: "evaluateRow",
@@ -1141,6 +1157,36 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
                   }
               }
           }, {
+              key: "startNewGame",
+              value: function() {
+                  var e = this.$game.querySelector("game-modal");
+                  e.removeAttribute("open"), this.boardState = new Array(6).fill(""), this.evaluations = new Array(6).fill(null), this.rowIndex = 0, this.tileIndex = 0, this.canInput = !0, this.gameStatus = Qa, this.letterEvaluations = {}, this.gameSeed = Zb(), this.solution = Pa(this.gameSeed, this.solution), this.dayOffset = Na(this.solution), this.restoringFromLocalStorage = !1, this.$keyboard.reset(), this.$board.innerHTML = "";
+                  for (var a = 0; a < 6; a++) {
+                      var s = document.createElement("game-row");
+                      s.setAttribute("length", 5), this.$board.appendChild(s)
+                  }
+                  this._renderSeed && this._renderSeed();
+                  Da("event", "level_start", {
+                      level_name: Fa(this.solution)
+                  });
+                  ja({
+                      rowIndex: this.rowIndex,
+                      boardState: this.boardState,
+                      evaluations: this.evaluations,
+                      gameSeed: this.gameSeed,
+                      solution: this.solution,
+                      gameStatus: this.gameStatus,
+                      restoringFromLocalStorage: !1
+                  })
+              }
+          }, {
+              key: "_renderSeed",
+              value: function() {
+                  var e = this.shadowRoot.querySelector(".title"),
+                      a = this.shadowRoot.getElementById("game-seed");
+                  e && (e.style.display = "flex", e.style.flexDirection = "column", e.style.alignItems = "center", e.style.lineHeight = "1", e.style.gap = "2px", e.style.fontSize = "24px"), a || (a = document.createElement("div"), a.id = "game-seed", a.style.fontSize = "12px", a.style.fontWeight = "400", a.style.letterSpacing = "0.08em", a.style.textTransform = "none", e.appendChild(a)), a.textContent = this.gameSeed
+              }
+          }, {
               key: "addLetter",
               value: function(e) {
                   this.gameStatus === Qa && (this.canInput && (this.tileIndex >= 5 || (this.boardState[this.rowIndex] += e, this.$board.querySelectorAll("game-row")[this.rowIndex].setAttribute("letters", this.boardState[this.rowIndex]), this.tileIndex += 1)))
@@ -1182,7 +1228,7 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
               value: function() {
                   var e = this.$game.querySelector("game-modal"),
                       a = document.createElement("game-stats");
-                  this.gameStatus === Za && this.rowIndex <= 6 && a.setAttribute("highlight-guess", this.rowIndex), a.gameApp = this, e.appendChild(a), e.setAttribute("open", "")
+                  this.gameStatus === Za && this.rowIndex <= 6 && a.setAttribute("highlight-guess", this.rowIndex), a.gameApp = this, e.replaceChildren(a), e.setAttribute("open", "")
               }
           }, {
               key: "showHelpModal",
@@ -1194,7 +1240,7 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
               key: "connectedCallback",
               value: function() {
                   var e = this;
-                  this.shadowRoot.appendChild(Ka.content.cloneNode(!0)), this.$game = this.shadowRoot.querySelector("#game"), this.$board = this.shadowRoot.querySelector("#board"), this.$keyboard = this.shadowRoot.querySelector("game-keyboard"), this.sizeBoard(), this.lastPlayedTs || setTimeout((function() {
+                  this.shadowRoot.appendChild(Ka.content.cloneNode(!0)), this.$game = this.shadowRoot.querySelector("#game"), this.$board = this.shadowRoot.querySelector("#board"), this.$keyboard = this.shadowRoot.querySelector("game-keyboard"), this.sizeBoard(), this._renderSeed(), this.lastPlayedTs || setTimeout((function() {
                       return e.showHelpModal()
                   }), 100);
                   for (var a = 0; a < 6; a++) {
@@ -1311,6 +1357,13 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
                   this._letterEvaluations = e, this._render()
               }
           }, {
+              key: "reset",
+              value: function() {
+                  this._letterEvaluations = {}, this.$keyboard && this.$keyboard.querySelectorAll("button").forEach((function(e) {
+                      e.removeAttribute("data-state"), e.classList.remove("fade")
+                  }))
+              }
+          }, {
               key: "dispatchKeyPressEvent",
               value: function(e) {
                   this.dispatchEvent(new CustomEvent("game-key-press", {
@@ -1379,6 +1432,161 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
   customElements.define("game-keyboard", ds);
   var cs = document.createElement("template");
   cs.innerHTML = '\n  <style>\n    .container {\n      display: flex;\n      flex-direction: column;\n      align-items: center;\n      justify-content: center;\n      padding: 16px 0; \n    }\n    h1 {\n      font-weight: 700;\n      font-size: 16px;\n      letter-spacing: 0.5px;\n      text-transform: uppercase;\n      text-align: center;\n      margin-bottom: 10px;\n    }\n  \n    #statistics {\n      display: flex;\n      margin-bottom: \n    }\n\n    .statistic-container {\n      flex: 1;\n    }\n\n    .statistic-container .statistic {\n      font-size: 36px;\n      font-weight: 400;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      text-align: center;\n      letter-spacing: 0.05em;\n      font-variant-numeric: proportional-nums;\n    }\n\n    .statistic.timer {\n      font-variant-numeric: initial;\n    }\n\n    .statistic-container .label {\n      font-size: 12px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      text-align: center;\n    }\n\n    #guess-distribution {\n      width: 80%;\n    }\n\n    .graph-container {\n      width: 100%;\n      height: 20px;\n      display: flex;\n      align-items: center;\n      padding-bottom: 4px;\n      font-size: 14px;\n      line-height: 20px;\n    }\n\n    .graph-container .graph {\n      width: 100%;\n      height: 100%;\n      padding-left: 4px;\n    }\n\n    .graph-container .graph .graph-bar {\n      height: 100%;\n      /* Assume no wins */\n      width: 0%;\n      position: relative;\n      background-color: var(--color-absent);\n      display: flex;\n      justify-content: center;\n    }\n\n    .graph-container .graph .graph-bar.highlight {\n      background-color: var(--color-correct);\n    }\n\n    .graph-container .graph .graph-bar.align-right {\n      justify-content: flex-end;\n      padding-right: 8px;\n    }\n\n    .graph-container .graph .num-guesses {\n      font-weight: bold;\n      color: var(--tile-text-color);\n    }\n\n    #statistics,\n    #guess-distribution {\n      padding-bottom: 10px;\n    }\n\n    .footer {\n      display: flex;\n      width: 100%;\n    }\n\n    .countdown {\n      border-right: 1px solid var(--color-tone-1);\n      padding-right: 12px;\n      width: 50%;\n    }\n\n    .share {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      padding-left: 12px;\n      width: 50%;\n    }\n\n    button#share-button {\n      background-color: var(--key-bg-correct);\n      color: var(--key-evaluated-text-color);\n      font-family: inherit;\n      font-weight: bold;\n      border-radius: 4px;\n      cursor: pointer;\n      border: none;\n      user-select: none;\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      text-transform: uppercase;\n      -webkit-tap-highlight-color: rgba(0,0,0,0.3);\n      width: 80%;\n      font-size: 20px;\n      height: 52px;\n      -webkit-filter: brightness(100%);\n    }\n    button#share-button:hover {\n      opacity: 0.9;\n    }\n    button#share-button game-icon {\n      width: 24px;\n      height: 24px;\n      padding-left: 8px;\n    }\n  </style>\n\n  <div class="container">\n    <h1>Statistiche</h1>\n    <div id="statistics"></div>\n    <h1>Distribuzione dei tentativi</h1>\n    <div id="guess-distribution"></div>\n    <div class="footer">\n      <div class="countdown">\n        <h1>Prossimo PARLE</h1>\n        <div id="timer">\n          <div class="statistic-container">\n            <div class="statistic timer">\n              <countdown-timer></countdown-timer>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class="share">\n        <button id="share-button">\n          Condividi \n        </button>\n      </div>\n    </div>\n  </div>\n';
+  cs.innerHTML = `
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 0;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    #statistics {
+      display: flex;
+    }
+    .statistic-container {
+      flex: 1;
+    }
+    .statistic-container .statistic {
+      font-size: 36px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      letter-spacing: 0.05em;
+      font-variant-numeric: proportional-nums;
+    }
+    .statistic-container .label {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    #guess-distribution {
+      width: 80%;
+    }
+    .graph-container {
+      width: 100%;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      padding-bottom: 4px;
+      font-size: 14px;
+      line-height: 20px;
+    }
+    .graph-container .graph {
+      width: 100%;
+      height: 100%;
+      padding-left: 4px;
+    }
+    .graph-container .graph .graph-bar {
+      height: 100%;
+      width: 0%;
+      position: relative;
+      background-color: var(--color-absent);
+      display: flex;
+      justify-content: center;
+    }
+    .graph-container .graph .graph-bar.highlight {
+      background-color: var(--color-correct);
+    }
+    .graph-container .graph .graph-bar.align-right {
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+    .graph-container .graph .num-guesses {
+      font-weight: bold;
+      color: var(--tile-text-color);
+    }
+    #statistics,
+    #guess-distribution {
+      padding-bottom: 10px;
+    }
+    .footer {
+      display: flex;
+      width: 100%;
+    }
+    .new-game {
+      width: 50%;
+      padding-right: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid var(--color-tone-1);
+    }
+    .share {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-left: 12px;
+      width: 50%;
+    }
+    button#new-game-button,
+    button#share-button {
+      font-family: inherit;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-transform: uppercase;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.3);
+      width: 80%;
+      font-size: 20px;
+      height: 52px;
+      -webkit-filter: brightness(100%);
+    }
+    button#new-game-button {
+      background-color: var(--color-tone-2);
+      color: var(--color-background);
+    }
+    button#share-button {
+      background-color: var(--key-bg-correct);
+      color: var(--key-evaluated-text-color);
+    }
+    button#new-game-button:hover,
+    button#share-button:hover {
+      opacity: 0.9;
+    }
+    button#share-button game-icon {
+      width: 24px;
+      height: 24px;
+      padding-left: 8px;
+    }
+  </style>
+
+  <div class="container">
+    <h1>Statistiche</h1>
+    <div id="statistics"></div>
+    <h1>Distribuzione dei tentativi</h1>
+    <div id="guess-distribution"></div>
+    <div class="footer">
+      <div class="new-game">
+        <button id="new-game-button">
+          Gioca ancora
+        </button>
+      </div>
+      <div class="share">
+        <button id="share-button">
+          Condividi
+        </button>
+      </div>
+    </div>
+  </div>
+`;
   var ps = document.createElement("template");
   ps.innerHTML = '\n  <div class="statistic-container">\n    <div class="statistic"></div>\n    <div class="label"></div>\n  </div>\n';
   var ms = document.createElement("template");
@@ -1424,6 +1632,8 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
                           o = e.stats[s],
                           r = ps.content.cloneNode(!0);
                       r.querySelector(".label").textContent = t, r.querySelector(".statistic").textContent = o, a.appendChild(r)
+                  })), this.shadowRoot.querySelector("button#new-game-button").addEventListener("click", (function(a) {
+                      a.preventDefault(), a.stopPropagation(), e.gameApp.startNewGame()
                   })), this.shadowRoot.querySelector("button#share-button").addEventListener("click", (function(a) {
                       a.preventDefault(), a.stopPropagation();
                       us(function(e) {
@@ -1516,7 +1726,7 @@ this.wordle = this.wordle || {}, this.wordle.bundle = function(e) {
   }(c(HTMLElement));
   customElements.define("game-switch", bs);
   var fs = document.createElement("template");
-  fs.innerHTML = '\n  <style>\n  .instructions {\n    font-size: 14px;\n    color: var(--color-tone-1)\n  }\n\n  .examples {\n    border-bottom: 1px solid var(--color-tone-4);\n    border-top: 1px solid var(--color-tone-4);\n  }\n\n  .example {\n    margin-top: 24px;\n    margin-bottom: 24px;\n  }\n\n  game-tile {\n    width: 40px;\n    height: 40px;\n  }\n\n  :host([page]) section {\n    padding: 16px;\n    padding-top: 0px;\n  }\n\n  </style>\n  <section>\n    <div class="instructions">\n      <p>Indovina delle <strong>PARoLE</strong> di 5 lettere in 6 tentativi.</p>\n      <p>PAR🇮🇹LE è una versione italiana (non ufficiale) di <a href="https://www.nytimes.com/games/wordle/index.html">WORDLE</a></p>\n      <p>Dopo ogni tentativo, i colori delle tessere cambieranno per mostrarti quanto vicino sei andato ad indovinare la parola.</p>\n      <div class="examples">\n        <div class="example">\n          <div class="row">\n            <game-tile letter="b" evaluation="correct" reveal></game-tile>\n            <game-tile letter="u"></game-tile>\n            <game-tile letter="f"></game-tile>\n            <game-tile letter="f"></game-tile>\n            <game-tile letter="a"></game-tile>\n          </div>\n          <p>La lettera <strong>B</strong> è nella parola ed è nel posto giusto.</p>\n        </div>\n        <div class="example">\n          <div class="row">\n            <game-tile letter="p"></game-tile>\n            <game-tile letter="o"></game-tile>\n            <game-tile letter="r" evaluation="present" reveal></game-tile>\n            <game-tile letter="t"></game-tile>\n            <game-tile letter="o"></game-tile>\n          </div>\n          <p>La lettera <strong>R</strong> è nella parola ma nel posto sbagliato.</p>\n        </div>\n        <div class="example">\n          <div class="row">\n            <game-tile letter="v"></game-tile>\n            <game-tile letter="a"></game-tile>\n            <game-tile letter="g"></game-tile>\n            <game-tile letter="h" evaluation="absent" reveal></game-tile>\n            <game-tile letter="i"></game-tile>\n          </div>\n          <p>La lettera <strong>H</strong> non è nella parola.</p>\n        </div>\n      </div>\n      <p><strong>Un nuovo gioco di PAR🇮🇹LE ogni giorno!<strong></p>\n    </div>\n  </section>\n';
+  fs.innerHTML = '\n  <style>\n  .instructions {\n    font-size: 14px;\n    color: var(--color-tone-1)\n  }\n\n  .examples {\n    border-bottom: 1px solid var(--color-tone-4);\n    border-top: 1px solid var(--color-tone-4);\n  }\n\n  .example {\n    margin-top: 24px;\n    margin-bottom: 24px;\n  }\n\n  game-tile {\n    width: 40px;\n    height: 40px;\n  }\n\n  :host([page]) section {\n    padding: 16px;\n    padding-top: 0px;\n  }\n\n  </style>\n  <section>\n    <div class="instructions">\n      <p>Indovina delle <strong>PARoLE</strong> di 5 lettere in 6 tentativi.</p>\n      <p>PAR🇮🇹LE è una versione italiana (non ufficiale) di <a href="https://www.nytimes.com/games/wordle/index.html">WORDLE</a></p>\n      <p>Dopo ogni tentativo, i colori delle tessere cambieranno per mostrarti quanto vicino sei andato ad indovinare la parola.</p>\n      <div class="examples">\n        <div class="example">\n          <div class="row">\n            <game-tile letter="b" evaluation="correct" reveal></game-tile>\n            <game-tile letter="u"></game-tile>\n            <game-tile letter="f"></game-tile>\n            <game-tile letter="f"></game-tile>\n            <game-tile letter="a"></game-tile>\n          </div>\n          <p>La lettera <strong>B</strong> è nella parola ed è nel posto giusto.</p>\n        </div>\n        <div class="example">\n          <div class="row">\n            <game-tile letter="p"></game-tile>\n            <game-tile letter="o"></game-tile>\n            <game-tile letter="r" evaluation="present" reveal></game-tile>\n            <game-tile letter="t"></game-tile>\n            <game-tile letter="o"></game-tile>\n          </div>\n          <p>La lettera <strong>R</strong> è nella parola ma nel posto sbagliato.</p>\n        </div>\n        <div class="example">\n          <div class="row">\n            <game-tile letter="v"></game-tile>\n            <game-tile letter="a"></game-tile>\n            <game-tile letter="g"></game-tile>\n            <game-tile letter="h" evaluation="absent" reveal></game-tile>\n            <game-tile letter="i"></game-tile>\n          </div>\n          <p>La lettera <strong>H</strong> non è nella parola.</p>\n        </div>\n      </div>\n      <p><strong>Gioca a PAR🇮🇹LE senza limiti!<strong></p>\n    </div>\n  </section>\n';
   var ks = function(e) {
       n(t, e);
       var a = h(t);
