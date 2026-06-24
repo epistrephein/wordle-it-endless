@@ -1,23 +1,19 @@
-# Par🇮🇹le
+# Endless Par🇮🇹le
 
-https://pietroppeter.github.io/wordle-it/
+This is a fork of [pietroppeter/wordle-it](https://github.com/pietroppeter/wordle-it)
+modified to allow endless play. The original game is limited to one word per
+day, but this version lets you play as many times as you want.
 
-Una versione italiana (non ufficiale) di [WORDLE](https://www.nytimes.com/games/wordle/index.html). Se l'autore di Wordle non approva, lo tiro giù: https://twitter.com/pietroppeter/status/1477993203425030144?s=20
+Each game is now driven by a visible numeric seed. The seed is shown below the
+title, can be randomized, and can also be edited manually from the settings
+panel, making it possible to replay a specific puzzle or share the same puzzle
+seed with someone else. Starting a new seeded game resets the board, keyboard,
+and saved in-progress state.
 
-Dizionari presi da https://github.com/napolux/paroleitaliane e https://github.com/sigmasaur/AnagramSolver
+At the end of a game, the statistics screen now focuses on continuing play. The
+new **Gioca ancora** button immediately starts another game with a fresh seed,
+so winning or losing no longer blocks the player until the next day. The old
+share action has been removed; in its place there is a **Resetta** button that
+clears saved statistics and starts over with a new game.
 
-# English
-
-An italian version of https://www.nytimes.com/games/wordle/index.html. Waiting from official approval (if not approved this will be taken down): https://twitter.com/pietroppeter/status/1477993203425030144?s=20
-
-Current status is beta: it should mostly work, usage might find issues.
-
-Italian words taken from https://github.com/napolux/paroleitaliane and https://github.com/sigmasaur/AnagramSolver
-
-Apart from English translation, the actual work was to replace two list of words in the original javascript. The hint for this came to me from: https://bert.org/2021/11/24/the-best-starting-word-in-wordle/
-
-Run `nim r itLines` and replace two lines in wordle-it.js to regenerate.
-
-Analytics publicly available at: https://plausible.io/pietroppeter.github.io%2Fwordle-it
-
-To reset state (also works for original wordle), type in console of your browser: `window.localStorage.clear()`
+The game is live at https://epistrephein.github.io/wordle-it-endless.
