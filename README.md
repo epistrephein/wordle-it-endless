@@ -7,10 +7,14 @@ day, but this version lets you play as many times as you want.
 Each game is now driven by a visible numeric seed. The seed is shown below the
 title, can be randomized, and can also be edited manually from the settings
 panel, making it possible to replay a specific puzzle or share the same puzzle
-seed with someone else. The settings panel also includes a **Seed progressivo**
-toggle: when it is enabled, each new game advances from the current seed to the
-next numeric seed; when it is disabled, new games use random seeds. Starting a
-new seeded game resets the board, keyboard, and saved in-progress state.
+seed with someone else. Starting a new seeded game resets the board, keyboard,
+and saved in-progress state.
+
+The settings panel also includes a **Seed progressivo** toggle: when it is
+enabled, each new game advances from the current seed to the next numeric seed;
+when it is disabled, new games use random seeds. This functionality can be used
+to play against other people by synchronizing the starting seed, then
+progressing together through subsequent games with the same words.
 
 At the end of a game, the statistics screen now focuses on continuing play. The
 new **Gioca ancora** button immediately starts another game using the active
